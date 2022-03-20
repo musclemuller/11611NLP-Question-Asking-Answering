@@ -1,4 +1,5 @@
 import spacy
+import nltk
 
 def write_sentences(filename, list):
     fp = open(filename, 'w+')
@@ -11,7 +12,7 @@ def write_sentences(filename, list):
 
 # Main program
 if __name__ == "__main__":
-    filename = "sentences/set1_a1.txt"
+    filename = "../sentences/set1_a1.txt"
     nlp = spacy.load('en_core_web_sm')
     tokens = []
     with open(filename, "r") as f:
@@ -22,5 +23,5 @@ if __name__ == "__main__":
                 one_sentence_token.append(token.text)
             tokens.append(one_sentence_token)
 
-    output_file = "tokens/set1_a1.txt"
+    output_file = "../tokens/set1_a1.txt"
     write_sentences(output_file, tokens)

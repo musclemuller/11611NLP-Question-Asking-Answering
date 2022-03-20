@@ -14,7 +14,7 @@ def write_sentences(filename, list):
 
 # Main program
 if __name__ == "__main__":
-    filename = "sentences/set1_a1.txt"
+    filename = "../sentences/set1_a1.txt"
     nlp = spacy.load('en_core_web_sm')
     ners = []
     with open(filename, "r") as f:
@@ -28,5 +28,5 @@ if __name__ == "__main__":
                 one_ner.append(ent.label_)
             ners.append(one_ner)
 
-    output_file = "NERs/set1_a1.txt"
+    output_file = "../NERs/set1_a1.txt"
     write_sentences(output_file, ners)
