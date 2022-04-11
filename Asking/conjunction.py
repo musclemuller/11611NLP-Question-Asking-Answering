@@ -30,6 +30,7 @@ def parse_tree(sentences):
     #     #print(doc.sentences[0].constituency)
     #     trees.append(doc.sentences[0].constituency)
     # return trees
+    return sentences
 
 
 if __name__ == "__main__":
