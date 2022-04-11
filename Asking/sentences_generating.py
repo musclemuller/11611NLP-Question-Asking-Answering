@@ -1,7 +1,7 @@
 import os
 import nltk
 import spacy
-import countChar
+import count_char
 import benepar
 
 def read_input_file(filename):

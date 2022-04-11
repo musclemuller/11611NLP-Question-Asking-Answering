@@ -92,6 +92,30 @@ def format_question(question):
     str = str + "?"
     return str
 
+def generating(sentences):
+    nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
+    questions = []
+    for line in sentences:
+        doc = nlp(line)
+        tree = doc.sentences[0].constituency
+        if match_npvp(tree):
+            # check for why questions
+            if "because" in line.split():
+                line = line.split("because")[0]
+                line = line.rstrip(",")
+                doc = nlp(line)
+                question = why_questions(doc)
+                questions.append(question)
+            # check if the question contains NERs
+            if len(doc.sentences[0].ents) != 0:
+                question = ner_questions(doc, line)
+                questions.extend(question)
+
+            question = binary_questions(doc)
+            question = format_question(question)
+            questions.append(question)
+    return questions
+
 # Main program
 if __name__ == "__main__":
     sentences = ["John made a cake.", "Mary makes a cake.", "I make a cake.", "John has made a cake.", "I have made a cake.", "She had made a cake.", "David had lunch in New York with Mary last Sunday because they did not meet in 10 years."]
