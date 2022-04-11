@@ -22,10 +22,9 @@ def parse_tree(sentences):
         sentence = sentences[i]
         doc = nlp(sentence)
         tree = doc.sentences[0].constituency
-        print(tree)
+        # print(tree)
         if apposition_util.matched(tree):
             sentences.remove(sentence)
-            #todo: generate two sentences
             sentences += apposition_util.split_apposition(tree.children[0])
     return sentences
     # trees = []
