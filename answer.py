@@ -1,12 +1,7 @@
 from answer_utils import sentence_processing
+from answer_utils import answer_generating
 
 import sys
-import subprocess
-import re
-import itertools
-import nltk
-from nltk.stem import PorterStemmer
-from bs4 import BeautifulSoup
 
 # Import our modules from /modules
 sys.path.append("modules")
@@ -22,7 +17,7 @@ def answer(question):
     question_reformat = question
     best_sentence = sentence_processing.find_best_candidate(question_reformat)
     print(best_sentence)
-    print('**********')
+    answer_generating.printAnswer(question, best_sentence)
 
 
 if __name__ == '__main__':
