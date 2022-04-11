@@ -14,7 +14,6 @@ def isMathc(src, pat):
 def chargeType(character):
     # character, number and space
     type_num = ['[a-z]|[A-Z]', '\d', '\s', '\n']
-    # 判断是否为英文字母
     if isMathc(character, type_num[0]) == 1:
         return 1
     elif isMathc(character, type_num[1]) == 1:

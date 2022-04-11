@@ -67,5 +67,5 @@ def form_strings(sentences):
         s = s + "."
         s.capitalize()
         strings.append(s)
-    print(strings)
+    #print(strings)
     return strings

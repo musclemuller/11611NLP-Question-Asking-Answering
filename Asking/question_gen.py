@@ -95,6 +95,7 @@ def format_question(question):
 # Main program
 if __name__ == "__main__":
     sentences = ["John made a cake.", "Mary makes a cake.", "I make a cake.", "John has made a cake.", "I have made a cake.", "She had made a cake.", "David had lunch in New York with Mary last Sunday because they did not meet in 10 years."]
+    #stanza.download(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
     nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
     questions = []
     for line in sentences:
