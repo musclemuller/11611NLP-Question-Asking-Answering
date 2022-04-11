@@ -56,17 +56,22 @@ def ner_questions(doc, sentence):
     first_word = words[0]
     if first_word in ents.keys():
         words[0] = get_wh(ents[first_word])
-        question = " ".join(words)
-        questions.append(format_question(question))
-        del ents[first_word]
+        if words[0] is not None:
+            question = " ".join(words)
+            questions.append(format_question(question))
+            del ents[first_word]
+            return questions
 
     base = binary_questions(doc)
+    # print("base:", base)
     for ent in ents.keys():
         wh = get_wh(ents[ent])
+        if wh is None:
+            continue
+        # print("wh:", wh)
         question = wh + " " + base
         question = question.replace(ent, "", 1)
         questions.append(format_question(question))
-
     return questions
 
 
@@ -120,27 +125,28 @@ def generating(sentences):
 if __name__ == "__main__":
     sentences = ["John made a cake.", "Mary makes a cake.", "I make a cake.", "John has made a cake.", "I have made a cake.", "She had made a cake.", "David had lunch in New York with Mary last Sunday because they did not meet in 10 years."]
     #stanza.download(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
-    nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
-    questions = []
-    for line in sentences:
-        doc = nlp(line)
-        tree = doc.sentences[0].constituency
-        if match_npvp(tree):
-            # check for why questions
-            if "because" in line.split():
-                line = line.split("because")[0]
-                line = line.rstrip(",")
-                doc = nlp(line)
-                question = why_questions(doc)
-                questions.append(question)
-            # check if the question contains NERs
-            if len(doc.sentences[0].ents) != 0:
-                question = ner_questions(doc, line)
-                questions.extend(question)
-
-            question = binary_questions(doc)
-            question = format_question(question)
-            questions.append(question)
+    # nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
+    # questions = []
+    # for line in sentences:
+    #     doc = nlp(line)
+    #     tree = doc.sentences[0].constituency
+    #     if match_npvp(tree):
+    #         # check for why questions
+    #         if "because" in line.split():
+    #             line = line.split("because")[0]
+    #             line = line.rstrip(",")
+    #             doc = nlp(line)
+    #             question = why_questions(doc)
+    #             questions.append(question)
+    #         # check if the question contains NERs
+    #         if len(doc.sentences[0].ents) != 0:
+    #             question = ner_questions(doc, line)
+    #             questions.extend(question)
+    # 
+    #         question = binary_questions(doc)
+    #         question = format_question(question)
+    #         questions.append(question)
+    questions = generating(sentences)
 
     print(questions)
 
