@@ -1,9 +1,13 @@
 import nltk
 import spacy
 import utils
-
+import logging
 
 def do_segementation(input_text):
+    logger1 = logging.getLogger('nltk')
+    logger2 = logging.getLogger('spacy')
+    logger1.disabled = True
+    logger2.disabled = True
     store = nltk.sent_tokenize(input_text, language='english')
 
     pronouns = {"He", "She", "It"}
@@ -36,6 +40,8 @@ def do_segementation(input_text):
             store[i] = sentence.replace(pronoun, subject)
     # store.sort(key=lambda i: len(i))
     store = [s for s in store if s.count(' ') < 50]
+    logger1.disabled = False
+    logger2.disabled = False
     return store
 
 
