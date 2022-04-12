@@ -1,6 +1,6 @@
 import stanza
 from tag import *
-import apposition_util
+from Asking import apposition_util
 import logging
 
 APPOSITION = (SENTENCE, ((NP, (NP, COMMA, NP, COMMA)), VP, PERIOD))

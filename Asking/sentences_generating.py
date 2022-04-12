@@ -1,6 +1,6 @@
 import nltk
 import spacy
-import utils
+from Asking import utils
 import logging
 
 def do_segementation(input_text):

@@ -1,5 +1,5 @@
 from collections import defaultdict
-import ranking_utils
+from Asking import ranking_utils
 
 
 def length_limit(questions):

@@ -1,6 +1,6 @@
 import stanza
-import sentences_generating
-import conjunction_util
+from Asking import sentences_generating
+from Asking import conjunction_util
 import logging
 
 def parse_tree(sentences):
