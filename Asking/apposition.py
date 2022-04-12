@@ -1,4 +1,3 @@
-import os
 import stanza
 from tag import *
 import apposition_util

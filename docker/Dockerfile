@@ -16,7 +16,9 @@ RUN apt-get -y install python3-pip python3-dev
 # Install spaCy
 RUN pip3 install --upgrade pip
 RUN pip3 install spacy
-RUN python3 -m spacy download en_core_web_lg
+RUN pip install stanza
+RUN python3 -m spacy download en_core_web_trf
+RUN python -c import stanza; stanza.download('en')
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA
