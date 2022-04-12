@@ -18,15 +18,16 @@ RUN pip3 install --upgrade pip
 RUN pip3 install spacy
 RUN pip3 install stanza
 RUN pip3 install nltk
+RUN python3 -m spacy download en_core_web_lg
 RUN python3 -c 'import stanza; stanza.download("en")'
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA
 ADD docker/ask /QA
 ADD docker/answer /QA
-ADD Answering /QA
-ADD Asking /QA
-ADD data /QA
+ADD Answering /QA/Answering
+ADD Asking /QA/Asking
+ADD data /QA/data
 ADD test_questions.txt /QA
 
 # Change the permissions of programs
