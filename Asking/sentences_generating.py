@@ -10,7 +10,7 @@ def do_segementation(input_text):
     pos_pronouns = {"His", "Her", "Its"}
     subject = ""
     pronoun = ""
-    nlp = spacy.load("en_core_web_trf")
+    nlp = spacy.load("en_core_web_lg")
 
     for i in range(len(store)):
         sentence = store[i]

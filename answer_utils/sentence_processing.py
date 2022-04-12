@@ -5,7 +5,7 @@ sentences = []
 sentences_lemma = []
 word_freq_sentence = {}
 sentences_vectors = []
-nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_lg')
 
 
 def vectorize_sentence(sentence_lemma):
