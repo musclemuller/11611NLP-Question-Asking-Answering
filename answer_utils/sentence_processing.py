@@ -26,7 +26,12 @@ def load_file(article_name):
     :param article_name: string
     :return: list of sentence
     """
-    doc = nlp(open(article_name, encoding='utf8').read())
+    try:
+        file_input = open(article_name, encoding='utf8').read()
+    except:
+        file_input = 'Hello! I am No Language Processing.'
+
+    doc = nlp(file_input)
     for sen in doc.sents:
         # TODO: how solve the '\n'
         sentences.append(sen.text.split('\n')[-1])
