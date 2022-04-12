@@ -1,11 +1,12 @@
-#pytimport os
 import stanza
 import sentences_generating
 import conjunction_util
-from tag import *
+import logging
 
 def parse_tree(sentences):
     #stanza.download(lang='en', processors='mwt,lemma,depparse')
+    logger = logging.getLogger('stanza')
+    logger.disabled = True
     nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency,mwt,lemma,depparse')
 
     for i in range(len(sentences)):
@@ -30,6 +31,7 @@ def parse_tree(sentences):
     #     #print(doc.sentences[0].constituency)
     #     trees.append(doc.sentences[0].constituency)
     # return trees
+    logger.disabled = False
     return sentences
 
 

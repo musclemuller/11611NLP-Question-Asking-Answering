@@ -1,11 +1,14 @@
 import stanza
 from tag import *
 import apposition_util
+import logging
 
 APPOSITION = (SENTENCE, ((NP, (NP, COMMA, NP, COMMA)), VP, PERIOD))
 
 def parse_tree(sentences):
     # stanza.download(lang='en', processors='tokenize,pos,constituency')
+    logger = logging.getLogger('stanza')
+    logger.disabled = True
     nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
     # doc = nlp("Bill Gates, a brilliant entrepreneur, owns Microsoft.")
     # tree = doc.sentences[0].constituency
@@ -25,6 +28,7 @@ def parse_tree(sentences):
         if apposition_util.matched(tree):
             sentences.remove(sentence)
             sentences += apposition_util.split_apposition(tree.children[0])
+    logger.disabled = False
     return sentences
     # trees = []
     # for doc in out_docs:

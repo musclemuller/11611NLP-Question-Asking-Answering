@@ -1,5 +1,6 @@
 from tag import *
 import stanza
+import logging
 
 def match_npvp(tree):
     tree = tree.children[0]
@@ -98,6 +99,8 @@ def format_question(question):
     return str
 
 def generating(sentences):
+    logger = logging.getLogger('stanza')
+    logger.disabled = True
     nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
     binary = []
     wh = []
@@ -119,6 +122,7 @@ def generating(sentences):
             question = binary_questions(doc)
             question = format_question(question)
             binary.append(question)
+    logger.disabled = False
     return binary, wh
 
 # Main program
