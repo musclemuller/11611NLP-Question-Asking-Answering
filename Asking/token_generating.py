@@ -1,5 +1,4 @@
 import spacy
-import nltk
 
 def write_sentences(filename, list):
     fp = open(filename, 'w+')

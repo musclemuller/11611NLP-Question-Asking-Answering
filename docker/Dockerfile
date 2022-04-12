@@ -20,6 +20,7 @@ RUN pip3 install stanza
 RUN pip3 install nltk
 RUN python3 -m spacy download en_core_web_lg
 RUN python3 -c 'import stanza; stanza.download("en")'
+RUN python3 -c 'import nltk; nltk.download("punkt")'
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA
@@ -29,6 +30,7 @@ ADD Answering /QA/Answering
 ADD Asking /QA/Asking
 ADD data /QA/data
 ADD test_questions.txt /QA
+ADD tag.py /QA
 
 # Change the permissions of programs
 CMD ["chmod 777 /QA/*"]

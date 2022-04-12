@@ -10,10 +10,10 @@ from Asking import utils
 from Asking import ranking
 
 if __name__ == "__main__":
-    #filename = "../data/set3/a4.txt"
+    # filename = "../data/set3/a4.txt"
     filename = sys.argv[1]
-    num_questions = sys.argv[2]
-    #num_questions = 500
+    num_questions = int(sys.argv[2])
+    # num_questions = 500
     # preprocessing
     input_text = utils.read_input_file(filename)
     sentences = sentences_generating.do_segementation(input_text)
@@ -34,18 +34,21 @@ if __name__ == "__main__":
     questions.extend(wh)
     # sorted_questions = sorted(questions, key=len)
     sample_question = "why nlp so difficult?"
-    if num_questions < len(questions):
-        for i in range(num_questions):
-            print(questions[i])
-    else:
-        for i in range(num_questions):
-            if i < len(questions):
+    try:
+        if num_questions < len(questions):
+            for i in range(num_questions):
                 print(questions[i])
-            else:
-                print(sample_question)
+        else:
+            for i in range(num_questions):
+                if i < len(questions):
+                    print(questions[i])
+                else:
+                    print(sample_question)
+    except:
+        for i in range(num_questions):
+            print(sample_question)
 
     # # write to question file
     # output_file = "./questions/set1_a1_question.txt"
     # utils.write_output_file(output_file, binary)
     # utils.write_output_file_append(output_file, wh)
-
