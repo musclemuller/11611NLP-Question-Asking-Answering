@@ -21,8 +21,8 @@ def answer(question):
 
 
 if __name__ == '__main__':
-    # article_file_name = sys.argv[1]
-    # question_file_name = sys.argv[2]
+    article_file_name = sys.argv[1]
+    question_file_name = sys.argv[2]
     article_file_name = 'nlp-project-dev-data-articles/set1/a1.txt'
     question_file_name = 'question_set1_a1.txt'
 
