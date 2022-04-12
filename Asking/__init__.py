@@ -4,9 +4,12 @@ import conjunction
 import question_generating
 import utils
 import ranking
+import sys
 
 if __name__ == "__main__":
-    filename = "../nlp-project-dev-data-articles/set1/a1.txt"
+    # filename = "../nlp-project-dev-data-articles/set1/a1.txt"
+    filename = sys.argv[1]
+    num_questions = sys.argv[2]
 
     # preprocessing
     input_text = utils.read_input_file(filename)
@@ -23,7 +26,15 @@ if __name__ == "__main__":
     ranked_wh = ranking.ranking(wh)
     binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh)
 
-    # write to question file
-    output_file = "./questions/set1_a1_question.txt"
-    utils.write_output_file(output_file, binary)
-    utils.write_output_file_append(output_file, wh)
+    questions = []
+    questions.extend(binary)
+    questions.extend(wh)
+    sorted_questions = sorted(questions, key=len)
+
+    for question in range(min(num_questions, len(sorted_questions))):
+        print(question)
+
+    # # write to question file
+    # output_file = "./questions/set1_a1_question.txt"
+    # utils.write_output_file(output_file, binary)
+    # utils.write_output_file_append(output_file, wh)
