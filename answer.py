@@ -16,13 +16,12 @@ def answer(question):
     # TODO: reformat the question into a sentence
     question_reformat = question
     best_sentence = sentence_processing.find_best_candidate(question_reformat)
-    print(best_sentence)
     answer_generating.printAnswer(question, best_sentence)
 
 
 if __name__ == '__main__':
-    article_file_name = sys.argv[1]
-    question_file_name = sys.argv[2]
+    #article_file_name = sys.argv[1]
+    #question_file_name = sys.argv[2]
     article_file_name = 'nlp-project-dev-data-articles/set1/a1.txt'
     question_file_name = 'question_set1_a1.txt'
 

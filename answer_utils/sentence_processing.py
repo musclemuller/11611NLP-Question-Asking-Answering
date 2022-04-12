@@ -1,10 +1,13 @@
 import math
 import spacy
+import logging
 
 sentences = []
 sentences_lemma = []
 word_freq_sentence = {}
 sentences_vectors = []
+logger = logging.getLogger('spacy')
+logger.disabled = True
 nlp = spacy.load('en_core_web_lg')
 
 
