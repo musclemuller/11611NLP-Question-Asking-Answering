@@ -1,5 +1,5 @@
-from answer_utils import sentence_processing
-from answer_utils import answer_generating
+from Answering import sentence_processing
+from Answering import answer_generating
 
 import sys
 
@@ -22,7 +22,7 @@ def answer(question):
 if __name__ == '__main__':
     #article_file_name = sys.argv[1]
     #question_file_name = sys.argv[2]
-    article_file_name = 'nlp-project-dev-data-articles/set1/a1.txt'
+    article_file_name = 'data/set1/a1.txt'
     question_file_name = 'question_set1_a1.txt'
 
     question_list = open(question_file_name, encoding='utf8').read().split("\n")

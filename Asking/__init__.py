@@ -6,7 +6,7 @@ import utils
 import ranking
 
 if __name__ == "__main__":
-    filename = "../nlp-project-dev-data-articles/set3/a4.txt"
+    filename = "../data/set3/a4.txt"
     # filename = sys.argv[1]
     # num_questions = sys.argv[2]
     num_questions = 500

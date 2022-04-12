@@ -1,4 +1,4 @@
-from answer_utils import sentence_processing
+from Answering import sentence_processing
 
 nlp = sentence_processing.nlp
 

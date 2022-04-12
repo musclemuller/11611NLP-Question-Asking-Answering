@@ -47,7 +47,7 @@ def do_segementation(input_text):
 
 # Main program
 if __name__ == "__main__":
-    filename = "../nlp-project-dev-data-articles/set1/a1.txt"
+    filename = "../data/set1/a1.txt"
     input_text = utils.read_input_file(filename)
     store = do_segementation(input_text)
 
