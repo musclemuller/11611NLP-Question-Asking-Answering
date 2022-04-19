@@ -10,6 +10,10 @@ logger = logging.getLogger('spacy')
 logger.disabled = True
 nlp = spacy.load('en_core_web_lg')
 
+# TODO: remove stop words?
+all_stopwords = nlp.Defaults.stop_words
+# all_stopwords.add("?")
+
 
 def vectorize_sentence(sentence_lemma):
     """
@@ -28,20 +32,26 @@ def load_file(article_name):
     """
     :param article_name: string
     :return: list of sentence
+
     """
+    sentences.clear()
+    sentences_lemma.clear()
+    word_freq_sentence.clear()
+    sentences_vectors.clear()
+
     try:
         file_input = open(article_name, encoding='utf8').read()
     except:
         file_input = 'Hello! I am No Language Processing.'
 
     doc = nlp(file_input)
+
     for sen in doc.sents:
         # TODO: how solve the '\n'
-        sentences.append(sen.text.split('\n')[-1])
-        sen_lemma = []
-        for word in sen:
-            sen_lemma.append(word.lemma_)
-        sentences_lemma.append(sen_lemma)
+        sen_spit = sen.text.split('\n')
+        sen_spit.sort(key=lambda x: len(x))
+        sentences.append(sen_spit[-1])
+        sentences_lemma.append([word.lemma_.lower() for word in sen if not word.is_punct])
 
 
 def my_tokenize(sentence):
@@ -51,17 +61,16 @@ def my_tokenize(sentence):
     """
     # TODO
     nlp_result = nlp(sentence)
-    lemmas = []
 
-    for token in nlp_result:
-        lemmas.append(token.lemma_)
-    return lemmas
+    return [word.lemma_.lower() for word in nlp_result if not word.is_punct]
 
 
 def term_fre(words):
     term_f = {}
     for w in words:
-        term_f[w] = term_f.get(w, 0) + 1
+        # TODO: term frequency
+        term_f[w] = min(term_f.get(w, 0) + 1, 1)
+        # term_f[w] = term_f.get(w, 0) + 1
     return term_f
 
 
@@ -76,15 +85,15 @@ def vectorize_question(question):
 
 def cal_similarity(q_vector, s_vector):
     similarity = 0
-    q_lst = 0
     s_lst = 0
     for q in q_vector:
         if q in s_vector:
             similarity += q_vector[q] * s_vector[q]
-            q_lst += q_vector[q] ** 2
-            s_lst += s_vector[q] ** 2
-    # similarity / (math.sqrt(q_lst) * math.sqrt(s_lst)) if math.sqrt(q_lst) * math.sqrt(s_lst) != 0 else 0
-    return similarity
+
+    for s in s_vector:
+        s_lst += s_vector[s] ** 2
+    # similarity /  math.sqrt(s_lst) if math.sqrt(s_lst) != 0 else 0
+    return (similarity / math.sqrt(s_lst)) if math.sqrt(s_lst) != 0 else 0
 
 
 def cal_log_inverse_sentence_fre(article_name):
