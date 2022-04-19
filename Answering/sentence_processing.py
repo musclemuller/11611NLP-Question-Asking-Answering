@@ -12,6 +12,8 @@ nlp = spacy.load('en_core_web_lg')
 
 # TODO: remove stop words?
 all_stopwords = nlp.Defaults.stop_words
+
+
 # all_stopwords.add("?")
 
 
