@@ -1,4 +1,5 @@
 from Answering import sentence_processing
+from Answering import binary_question
 
 nlp = sentence_processing.nlp
 
@@ -15,6 +16,7 @@ def printAnswer(ask, original):
 
         # Is-A Question
     if question_type == 'is':
+        '''
         # find closest subpart in original one
         # namely: with same beginning & ending
         answer = "Yes"
@@ -30,8 +32,10 @@ def printAnswer(ask, original):
             if token.text not in str(question.text):
                 if token.text.endswith("n't") or token.text.endswith('not') or token.text.endswith('no'):
                     answer = "No"
+        '''
+        binary_result = binary_question.answer_binary(ask, original)
 
-        print(answer)
+        print('Yes.' if binary_result else 'No.')
 
     if question_type == 'wh':
         # for token in question:

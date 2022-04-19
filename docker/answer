@@ -18,14 +18,17 @@ def answer(question):
     # TODO: reformat the question into a sentence
     question_reformat = question
     best_sentence = sentence_processing.find_best_candidate(question_reformat)
+    print(question, best_sentence)
     answer_generating.printAnswer(question, best_sentence)
 
 
 if __name__ == '__main__':
     #article_file_name = sys.argv[1]
     #question_file_name = sys.argv[2]
-    article_file_name = '../data/set1/a1.txt'
-    question_file_name = '../question_set1_a1.txt'
+    article_file_name = '../data/set1/a6.txt'
+    #question_file_name = '../question_set1_a1.txt'
+
+    question_file_name = '../test_questions.txt'
 
     question_list = open(question_file_name, encoding='utf8').read().split("\n")
     sentence_processing.load_file(article_file_name)
