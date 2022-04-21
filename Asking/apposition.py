@@ -25,7 +25,13 @@ def parse_tree(sentences):
         # print(tree)
         if apposition_util.matched(tree):
             sentences.remove(sentence)
+<<<<<<< Updated upstream
             sentences += apposition_util.split_apposition(tree.children[0])
+=======
+            changed = apposition_util.split_apposition(tree.children[0])
+            sentences += changed
+    logger.disabled = False
+>>>>>>> Stashed changes
     return sentences
     # trees = []
     # for doc in out_docs:
@@ -35,9 +41,9 @@ def parse_tree(sentences):
 
 
 if __name__ == "__main__":
-    #sentences = ["Bill Gates, a brilliant entrepreneur, owns Microsoft."]
-    sentences = ["Dempsey played for one of the top youth soccer clubs in the state, the Dallas Texans, "
-                 "before playing for Furman University's men's soccer team."]
+    sentences = ["Fulham became another American addition to a Cottagers' squad which included US internationals Brian McBride and Carlos Bocanegra"]
+    #sentences = ["Dempsey played for one of the top youth soccer clubs in the state, the Dallas Texans, "
+    #             "before playing for Furman University's men's soccer team."]
     trees = parse_tree(sentences)
     for sentence in sentences:
         print(sentence)

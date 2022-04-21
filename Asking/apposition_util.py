@@ -58,4 +58,10 @@ def combine_two_sentences(np, vp):
     str2 = ' '.join(vp)
     str = str1 + ' ' + str2
     str = str.capitalize()
+<<<<<<< Updated upstream
     return str
+=======
+    str.strip(".,")
+    str = str + "."
+    return str
+>>>>>>> Stashed changes

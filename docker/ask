@@ -1,0 +1,57 @@
+#!/usr/bin/python3 -W ignore::DeprecationWarning
+# -*- coding:utf8 -*-
+import sys
+
+from Asking import sentences_generating
+from Asking import apposition
+from Asking import conjunction
+from Asking import question_generating
+from Asking import utils
+from Asking import ranking
+from Asking import further_simplicate
+
+if __name__ == "__main__":
+    filename = "../data/set1/a2.txt"
+    # filename = sys.argv[1]
+    # num_questions = int(sys.argv[2])
+    num_questions = 60
+    # preprocessing
+    input_text = utils.read_input_file(filename)
+    sentences = sentences_generating.do_segementation(input_text)
+    sentences = further_simplicate.further_simplification(sentences)
+    sentences = apposition.parse_tree(sentences)
+    sentences = conjunction.parse_tree(sentences)
+
+    sentences = [s for s in sentences if (50 > s.count(' ') > 3)]
+
+    # question generating
+    binary, wh = question_generating.generating(sentences)
+
+    # ranking
+    ranked_binary = ranking.ranking(binary)
+    ranked_wh = ranking.ranking(wh)
+    binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh)
+
+    questions = []
+    questions.extend(binary)
+    questions.extend(wh)
+    # sorted_questions = sorted(questions, key=len)
+    sample_question = "why nlp so difficult?"
+    try:
+        if num_questions < len(questions):
+            for i in range(num_questions):
+                print(questions[i])
+        else:
+            for i in range(num_questions):
+                if i < len(questions):
+                    print(questions[i])
+                else:
+                    print(sample_question)
+    except:
+        for i in range(num_questions):
+            print(sample_question)
+
+    # # write to question file
+    # output_file = "./questions/set1_a1_question.txt"
+    # utils.write_output_file(output_file, binary)
+    # utils.write_output_file_append(output_file, wh)

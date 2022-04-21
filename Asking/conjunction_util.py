@@ -1,3 +1,5 @@
+import string
+
 from tag import *
 import re
 
@@ -54,10 +56,8 @@ def form_strings(sentences):
     strings = []
     for line in sentences:
         str = ""
-        for i,word in enumerate(line):
-            if i < len(line) - 1 and line[i+1] == ")":
-                str += word
-            elif i < len(line) - 1 and line[i+1] == ",":
+        for i, word in enumerate(line):
+            if i < len(line) - 1 and (line[i+1] in string.punctuation and line[i+1] != "("):
                 str += word
             elif word == '(' or word == ')':
                 str += word
@@ -65,7 +65,7 @@ def form_strings(sentences):
                 str = str + word + " "
         s = str.strip()
         s = s + "."
-        s.capitalize()
+        s = s[0].upper() + s[1:len(s)]
         strings.append(s)
     #print(strings)
     return strings
