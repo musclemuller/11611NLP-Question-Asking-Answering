@@ -44,7 +44,6 @@ def binary_questions(doc, line):
     spacy_nlp = models.spacy_nlp
     spacy_doc = spacy_nlp(line)
     root = return_root(spacy_doc).text
-    print(root)
     for i, word in enumerate(words):
         if word.deprel == "aux" and words[i+1].text == root: # if sentence contains aux verbs, use different method
             return front_binary_quesitons(doc)
