@@ -2,53 +2,53 @@ from Answering import sentence_processing
 
 nlp = sentence_processing.nlp
 
-import spacy
 
-nlp = spacy.load('en_core_web_sm')
-
-
-def load_NER(sentence):
+def load_sentence(sentence):
     doc = nlp(sentence)
-    my_tag = {'who': ['PERSON'], 'when': ['DATE', 'TIME'], 'money': ['MONEY'], 'where': ["LOC", "GPE"]}
-    ner_dict = {}
+    ner_lst = set()
     for ent in doc.ents:
-        for tag in my_tag:
-            found = False
-            for t in my_tag[tag]:
-                if t == ent.label_:
-                    ner_dict[tag] = ner_dict.get(tag, []) + [ent.lemma_.lower()]
-                    found = True
-                    break
-            if found:
-                break
-        else:
-            ner_dict['other'] = ner_dict.get('other', []) + [ent.lemma_.lower()]
+        ner_lst.add(ent.lemma_.lower())
 
-    return ner_dict
+    return ner_lst, doc
 
 
 def compare_NER(sentence_ner, question_ner):
     # TODO: check is question has NER
+    result = False
     if not question_ner:
         return True
 
-    cnt_positive = 0
-    cnt_negative = 0
-    for tag in question_ner:
-        tagged_ner_sentence = sentence_ner[tag]
-        tagged_ner_question = question_ner[tag]
-        for q_ner in tagged_ner_question:
-            for s_ner in tagged_ner_sentence:
-                if q_ner == s_ner or q_ner in s_ner or s_ner in q_ner:
-                    cnt_positive += 1
-                    break
-            else:
-                cnt_negative += 1
-    # print(cnt_positive, cnt_negative)
-    return cnt_negative == 0
+    intersect = sentence_ner.intersection(question_ner)
+    if len(question_ner) == len(intersect):
+        result = True
+
+    print(question_ner)
+    print(intersect)
+
+    return result
+
+
+def find_negation(question, sentence):
+    found_negative = False
+    # find root of question:
+    q_root_token = None
+    for token in question:
+        if token.dep_ == 'ROOT':
+            q_root_token = token
+
+    if q_root_token:
+        for token in sentence:
+            if token.dep_ == 'neg':
+                print(token.head.lemma_, q_root_token.lemma_)
+                print(token.similarity(q_root_token))
+                if token.head.lemma_ == q_root_token.lemma_ or token.similarity(q_root_token) >= 0.6:
+                    found_negative = True
+
+    return found_negative
 
 
 def answer_binary(sentence, question):
-    question_ner = load_NER(sentence)
-    sentence_ner = load_NER(question)
-    return compare_NER(sentence_ner, question_ner)
+    question_ner, q_doc = load_sentence(sentence)
+    sentence_ner, s_doc = load_sentence(question)
+    compare_NER(sentence_ner, question_ner)
+    return compare_NER(sentence_ner, question_ner) and not find_negation(q_doc, s_doc)
