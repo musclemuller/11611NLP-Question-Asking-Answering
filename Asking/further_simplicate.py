@@ -11,6 +11,9 @@ def further_simplification(sentences):
         doc = nlp(line)
 
         root = return_root(doc)
+        if root is None:
+            simplified_sentences.append(line)
+            continue;
         list_of_verbs = verbs(doc, root)
         first_noun = noun(root)
 
