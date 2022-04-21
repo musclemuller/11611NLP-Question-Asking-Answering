@@ -21,6 +21,8 @@ RUN pip3 install nltk
 RUN python3 -m spacy download en_core_web_lg
 RUN python3 -c 'import stanza; stanza.download("en")'
 RUN python3 -c 'import nltk; nltk.download("punkt")'
+RUN pip install tensorflow==1.15
+RUN pip install numpy==1.19.5
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA

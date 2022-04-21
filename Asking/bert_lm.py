@@ -6,20 +6,22 @@ from __future__ import print_function
 
 import os
 import json
+import logging
 import bert_model
 import tokenization
 import numpy as np
 import tensorflow as tf
 
+logger = logging.getLogger('tf')
+logger.disabled = True
+
 max_predictions_per_seq = 1
-bert_config_file= "../uncased_L-12_H-768_A-12/bert_config.json"
-input_file="../bertdata/lm/test.en.tsv"
-vocab_file = "../uncased_L-12_H-768_A-12/vocab.txt"
-init_checkpoint = "../uncased_L-12_H-768_A-12/bert_model.ckpt"
+bert_config_file= "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/bert_config.json"
+vocab_file = "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/vocab.txt"
+init_checkpoint = "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/bert_model.ckpt"
 do_lower_case = True
 max_seq_length = 128
 predict_batch_size = 8
-output_dir = "tmp/lm_output/"
 use_tpu = False
 tpu_name = None
 tpu_zone = None
@@ -390,12 +392,7 @@ def parse_result(result, all_tokens, output_file=None):
             #tf.logging.info("Saving results to %s" % output_file)
             writer.write(json.dumps(sentences, indent=2, ensure_ascii=False))
 
-
-
-if __name__ == "__main__":
-
-    tf.logging.set_verbosity(tf.logging.INFO)
-
+def bert_rank(input_file, output_dir):
     bert_config = bert_model.BertConfig.from_json_file(bert_config_file)
 
     if max_seq_length > bert_config.max_position_embeddings:
@@ -438,10 +435,6 @@ if __name__ == "__main__":
     features, all_tokens = convert_examples_to_features(predict_examples,
                                                         max_seq_length, tokenizer)
 
-    tf.logging.info("***** Running prediction*****")
-    tf.logging.info("  Num examples = %d", len(predict_examples))
-    tf.logging.info("  Batch size = %d", predict_batch_size)
-
     if use_tpu:
         # Warning: According to tpu_estimator.py Prediction on TPU is an
         # experimental feature and hence not supported here
@@ -455,3 +448,8 @@ if __name__ == "__main__":
     result = estimator.predict(input_fn=predict_input_fn)
     output_predict_file = os.path.join(output_dir, "test_results.json")
     parse_result(result, all_tokens, output_predict_file)
+
+if __name__ == "__main__":
+    input_file = "/content/11611NLP-Question-Asking-Answering/bertdata/lm/test.en.tsv"
+    output_dir = "/content/11611NLP-Question-Asking-Answering/lm_output/"
+    bert_rank(input_file, output_dir)
