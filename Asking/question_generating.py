@@ -44,22 +44,23 @@ def binary_questions(doc, line):
     spacy_nlp = models.spacy_nlp
     spacy_doc = spacy_nlp(line)
     root = return_root(spacy_doc).text
+    print(root)
     for i, word in enumerate(words):
-        if word.deprel == "aux": # if sentence contains aux verbs, use different method
+        if word.deprel == "aux" and words[i+1].text == root: # if sentence contains aux verbs, use different method
+            return front_binary_quesitons(doc)
+        elif word.text == "are":
             return front_binary_quesitons(doc)
         elif word.xpos == "VBP" and word.text == root:
-            if word.text == "are":
-                return front_binary_quesitons(doc)
             question = "do " + question
             question = question + word.lemma + " "
+        elif word.xpos == "VBZ" and word.text == "is":
+            return front_binary_quesitons(doc)
         elif word.xpos == "VBZ" and word.text == root:
-            if word.text == "is":
-                return front_binary_quesitons(doc)
             question = "does " + question
             question = question + word.lemma + " "
+        elif word.text == "were" or word.text == "was":
+            return front_binary_quesitons(doc)
         elif word.xpos == "VBD" and word.text == root:
-            if word.text == "were" or word.text == "was":
-                return front_binary_quesitons(doc)
             question = "did " + question
             question = question + word.lemma + " "
         elif word.xpos == ".":
@@ -83,7 +84,8 @@ def return_root(doc):
 def front_binary_quesitons(doc):
     question = ""
     for word in doc.sentences[0].words:
-        if word.deprel == "aux" or word.xpos == "VBP" or word.xpos == "VBD" or word.xpos == "VBZ":
+        if word.deprel == "aux" or word.text == "is" or word.text == "was" or word.text == "were"\
+                or word.text == "are":
             question = word.text + " " + question
         elif word.xpos == ".":
             break;
@@ -183,7 +185,7 @@ def format_question(question):
     q = ""
     for i, word in enumerate(words):
 
-        if i < len(words) - 2 and (words[i + 1] in string.punctuation and
+        if i < len(words) - 2 and ((words[i + 1] in string.punctuation or word == "-" or word == "–") and
                                    (words[i + 1] != "(")):
             if word != " ":
                 q += word
@@ -259,7 +261,8 @@ if __name__ == "__main__":
     #              "I have made a cake.", "She had made a cake.",
     #              "David had lunch in New York with Mary last Sunday because they did not meet in 10 years.",
     #              "John did not go to the gym yesterday.", "John will have a meeting on Monday."]
-    sentences = ["Fulham became another American addition to a Cottagers' squad which included US internationals Brian McBride and Carlos Bocanegra."]
+    sentences = ["She had made a cake.", "Donovan was a member of the U.S. squad at the 2006 World Cup, in which the Americans eliminated in the group stage.",
+                 "He was named to the MLS All-Time Best XI after the season."]
     questions = generating(sentences) # generating binary and wh questions for NP, VP sentences
     for l in questions:
         for q in l:
