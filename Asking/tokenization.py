@@ -18,10 +18,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
 import collections
 import unicodedata
 import six
+import logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
+logger = logging.getLogger('tensorflow')
+logger.disabled = True
 
 if six.PY3: unicode = str
 

@@ -1,5 +1,4 @@
 """BERT language model predict."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -10,9 +9,9 @@ import logging
 import bert_model
 import tokenization
 import numpy as np
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
-
-logger = logging.getLogger('tf')
+logger = logging.getLogger('tensorflow')
 logger.disabled = True
 
 max_predictions_per_seq = 1
@@ -38,6 +37,8 @@ class InputExample(object):
 
 
 def read_examples(input_file):
+    logger = logging.getLogger('tf')
+    logger.disabled = True
     """Read a list of `InputExample`s from an input file."""
     examples = []
     unique_id = 0
@@ -51,6 +52,7 @@ def read_examples(input_file):
             examples.append(
                 InputExample(unique_id, line))
             unique_id += 1
+    logger.disabled = False
     return examples
 
 
@@ -64,7 +66,8 @@ def model_fn_builder(bert_config, init_checkpoint, use_tpu,
         #tf.logging.info("*** Features ***")
         # for name in sorted(features.keys()):
         #     tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
-
+        logger = logging.getLogger('tf')
+        logger.disabled = True
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
@@ -111,6 +114,7 @@ def model_fn_builder(bert_config, init_checkpoint, use_tpu,
         if mode == tf.estimator.ModeKeys.PREDICT:
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode, predictions=masked_lm_example_loss, scaffold_fn=scaffold_fn)  # 输出mask_word的score
+        logger.disabled = False
         return output_spec
 
     return model_fn
@@ -119,6 +123,8 @@ def model_fn_builder(bert_config, init_checkpoint, use_tpu,
 def get_masked_lm_output(bert_config, input_tensor, output_weights, positions,
                          label_ids):
     """Get loss and log probs for the masked LM."""
+    logger = logging.getLogger('tf')
+    logger.disabled = True
     input_tensor = gather_indexes(input_tensor, positions)
 
     with tf.variable_scope("cls/predictions"):
@@ -149,11 +155,14 @@ def get_masked_lm_output(bert_config, input_tensor, output_weights, positions,
             label_ids, depth=bert_config.vocab_size, dtype=tf.float32)
         per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
         loss = tf.reshape(per_example_loss, [-1, tf.shape(positions)[1]])
+    logger.disabled = False
     return loss
 
 
 def gather_indexes(sequence_tensor, positions):
     """Gathers the vectors at the specific positions over a minibatch."""
+    logger = logging.getLogger('tf')
+    logger.disabled = True
     sequence_shape = bert_model.get_shape_list(sequence_tensor, expected_rank=3)
     batch_size = sequence_shape[0]
     seq_length = sequence_shape[1]
@@ -165,11 +174,14 @@ def gather_indexes(sequence_tensor, positions):
     flat_sequence_tensor = tf.reshape(sequence_tensor,
                                       [batch_size * seq_length, width])
     output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
+    logger.disabled = False
     return output_tensor
 
 
 def input_fn_builder(features, seq_length, max_predictions_per_seq):
     """Creates an `input_fn` closure to be passed to TPUEstimator."""
+    logger = logging.getLogger('tf')
+    logger.disabled = True
 
     all_input_ids = []
     all_input_mask = []
@@ -222,6 +234,7 @@ def input_fn_builder(features, seq_length, max_predictions_per_seq):
         d = d.batch(batch_size=batch_size, drop_remainder=False)
         return d
 
+    logger.disabled = False
     return input_fn
 
 
@@ -229,6 +242,8 @@ def input_fn_builder(features, seq_length, max_predictions_per_seq):
 # people who depend on it.
 def convert_examples_to_features(examples, max_seq_length, tokenizer):
     """Convert a set of `InputExample`s to a list of `InputFeatures`."""
+    logger = logging.getLogger('tf')
+    logger.disabled = True
 
     all_features = []
     all_tokens = []
@@ -242,6 +257,7 @@ def convert_examples_to_features(examples, max_seq_length, tokenizer):
         all_features.extend(features)
         all_tokens.extend(tokens)
 
+    logger.disabled = False
     return all_features, all_tokens
 
 
@@ -308,15 +324,6 @@ def convert_single_example(ex_index, example, max_seq_length,
     assert len(input_mask) == max_seq_length
     assert len(segment_ids) == max_seq_length
 
-    # if ex_index < 5:
-    #     tf.logging.info("*** Example ***")
-    #     tf.logging.info("id: %s" % example.unique_id)
-    #     tf.logging.info("tokens: %s" % " ".join(
-    #         [tokenization.printable_text(x) for x in input_tokens]))
-    #     tf.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
-    #     tf.logging.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
-    #     tf.logging.info("segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
-
     features = create_sequential_mask(input_tokens, input_ids, input_mask, segment_ids,
                                       max_predictions_per_seq)
     return features, input_tokens
@@ -353,6 +360,8 @@ def create_sequential_mask(input_tokens, input_ids, input_mask, segment_ids,
 
 
 def parse_result(result, all_tokens, output_file=None):
+    logger = logging.getLogger('tf')
+    logger.disabled = True
     with tf.io.gfile.GFile(output_file, "w") as writer:
         #tf.logging.info("***** Predict results *****")
         i = 0
@@ -391,8 +400,11 @@ def parse_result(result, all_tokens, output_file=None):
         if output_file is not None:
             #tf.logging.info("Saving results to %s" % output_file)
             writer.write(json.dumps(sentences, indent=2, ensure_ascii=False))
+    logger.disabled = False
 
 def bert_rank(input_file, output_dir):
+    logger = logging.getLogger('tf')
+    logger.disabled = True
     bert_config = bert_model.BertConfig.from_json_file(bert_config_file)
 
     if max_seq_length > bert_config.max_position_embeddings:
@@ -448,8 +460,9 @@ def bert_rank(input_file, output_dir):
     result = estimator.predict(input_fn=predict_input_fn)
     output_predict_file = os.path.join(output_dir, "test_results.json")
     parse_result(result, all_tokens, output_predict_file)
+    logger.disabled = False
 
 if __name__ == "__main__":
-    input_file = "/content/11611NLP-Question-Asking-Answering/bertdata/lm/test.en.tsv"
+    input_file = "/content/11611NLP-Question-Asking-Answering/bertdata/lm/test.txt"
     output_dir = "/content/11611NLP-Question-Asking-Answering/lm_output/"
     bert_rank(input_file, output_dir)

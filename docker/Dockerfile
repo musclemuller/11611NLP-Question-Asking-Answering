@@ -23,9 +23,11 @@ RUN python3 -c 'import stanza; stanza.download("en")'
 RUN python3 -c 'import nltk; nltk.download("punkt")'
 RUN pip install tensorflow==1.15
 RUN pip install numpy==1.19.5
+RUN wget https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-12_H-768_A-12.zip
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA
+RUN unzip uncased_L-12_H-768_A-12.zip -d /QA/uncased_L-12_H-768_A-12
 ADD docker/ask /QA
 ADD docker/answer /QA
 ADD Answering /QA/Answering
