@@ -1,4 +1,5 @@
 from Answering import sentence_processing
+from random import randint
 
 nlp = sentence_processing.nlp
 
@@ -7,7 +8,7 @@ def load_sentence(sentence):
     doc = nlp(sentence)
     ner_lst = set()
     for ent in doc.ents:
-        ner_lst.add(ent.lemma_.lower())
+        ner_lst.add(ent.lemma_)
 
     return ner_lst, doc
 
@@ -49,8 +50,8 @@ def answer_binary(sentence, question):
     sentence_ner, s_doc = load_sentence(question)
     compare_ner_result, only_question_ner = compare_NER(sentence_ner, question_ner)
     if not compare_ner_result:
-        if only_question_ner:
-            print('No, it should not be {}.'.format(str(only_question_ner.pop()).capitalize()))
+        if only_question_ner and randint(1, 10) > 4:
+            print('No, it should not be {}.'.format(str(only_question_ner.pop())))
         else:
             print('No.')
     elif find_negation(q_doc, s_doc):

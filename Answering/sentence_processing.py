@@ -58,8 +58,6 @@ def load_file(article_name):
         if len(sen_spit) > 1:
             max_sen = max(sen_spit, key=lambda x: len(x))
             sen = nlp(max_sen)
-        else:
-            max_sen = sen.text
 
         sen_lemma = []
         word_lst = []
@@ -132,6 +130,7 @@ def cal_log_inverse_sentence_fre(article_name):
     :param article_name: string
     :return: dict of log inverse of sentence frequency
     """
+    load_file(article_name)
     # print('Log inverse: tokenize')
     for sentences_idx in range(len(sentences)):
         word_set = set()

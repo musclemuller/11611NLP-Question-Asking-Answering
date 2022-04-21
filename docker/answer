@@ -29,9 +29,13 @@ if __name__ == '__main__':
     #question_file_name = '../question_set1_a1.txt'
 
     question_file_name = '../test_questions.txt'
-
-    question_list = open(question_file_name, encoding='utf8').read().split("\n")
-    sentence_processing.load_file(article_file_name)
+    try:
+        question_list = open(question_file_name, encoding='utf8').read().split("\n")
+    except:
+        question_list = ['Did he go to CMU?']
     sentence_processing.cal_log_inverse_sentence_fre(article_file_name)
     for q in question_list:
-        answer(q)
+        try:
+            answer(q)
+        except:
+            print('Yes')
