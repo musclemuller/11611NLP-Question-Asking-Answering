@@ -23,12 +23,12 @@ def answer(question):
 
 
 if __name__ == '__main__':
-    #article_file_name = sys.argv[1]
-    #question_file_name = sys.argv[2]
-    article_file_name = '../data/set1/a6.txt'
+    article_file_name = sys.argv[1]
+    question_file_name = sys.argv[2]
+    #article_file_name = '../data/set1/a6.txt'
     #question_file_name = '../question_set1_a1.txt'
 
-    question_file_name = '../test_questions.txt'
+    #question_file_name = '../test_questions.txt'
     try:
         question_list = open(question_file_name, encoding='utf8').read().split("\n")
     except:

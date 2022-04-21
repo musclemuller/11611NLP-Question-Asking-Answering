@@ -15,9 +15,9 @@ logger = logging.getLogger('tensorflow')
 logger.disabled = True
 
 max_predictions_per_seq = 1
-bert_config_file= "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/bert_config.json"
-vocab_file = "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/vocab.txt"
-init_checkpoint = "/content/11611NLP-Question-Asking-Answering/uncased_L-12_H-768_A-12/bert_model.ckpt"
+bert_config_file= "../uncased_L-12_H-768_A-12/bert_config.json"
+vocab_file = "../uncased_L-12_H-768_A-12/vocab.txt"
+init_checkpoint = "../uncased_L-12_H-768_A-12/bert_model.ckpt"
 do_lower_case = True
 max_seq_length = 128
 predict_batch_size = 8
