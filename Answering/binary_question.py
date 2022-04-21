@@ -16,16 +16,13 @@ def compare_NER(sentence_ner, question_ner):
     # TODO: check is question has NER
     result = False
     if not question_ner:
-        return True
+        return True, None
 
-    intersect = sentence_ner.intersection(question_ner)
-    if len(question_ner) == len(intersect):
-        result = True
+    only_question_ner = question_ner - sentence_ner
 
-    print(question_ner)
-    print(intersect)
+    result = (len(only_question_ner) == 0)
 
-    return result
+    return result, only_question_ner
 
 
 def find_negation(question, sentence):
@@ -39,8 +36,8 @@ def find_negation(question, sentence):
     if q_root_token:
         for token in sentence:
             if token.dep_ == 'neg':
-                print(token.head.lemma_, q_root_token.lemma_)
-                print(token.similarity(q_root_token))
+                # print(token.head.lemma_, q_root_token.lemma_)
+                # print(token.similarity(q_root_token))
                 if token.head.lemma_ == q_root_token.lemma_ or token.similarity(q_root_token) >= 0.6:
                     found_negative = True
 
@@ -50,5 +47,14 @@ def find_negation(question, sentence):
 def answer_binary(sentence, question):
     question_ner, q_doc = load_sentence(sentence)
     sentence_ner, s_doc = load_sentence(question)
-    compare_NER(sentence_ner, question_ner)
-    return compare_NER(sentence_ner, question_ner) and not find_negation(q_doc, s_doc)
+    compare_ner_result, only_question_ner = compare_NER(sentence_ner, question_ner)
+    if not compare_ner_result:
+        if only_question_ner:
+            print('No, it should not be {}.'.format(str(only_question_ner.pop()).capitalize()))
+        else:
+            print('No.')
+    elif find_negation(q_doc, s_doc):
+        print('No.')
+    else:
+        print('Yes.')
+

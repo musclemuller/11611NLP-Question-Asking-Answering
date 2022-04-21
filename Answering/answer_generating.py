@@ -33,9 +33,7 @@ def printAnswer(ask, original):
                 if token.text.endswith("n't") or token.text.endswith('not') or token.text.endswith('no'):
                     answer = "No"
         '''
-        binary_result = binary_question.answer_binary(ask, original)
-
-        print('Yes.' if binary_result else 'No.')
+        binary_question.answer_binary(ask, original)
 
     if question_type == 'wh':
         # for token in question:

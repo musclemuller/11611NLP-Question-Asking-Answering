@@ -48,12 +48,41 @@ def load_file(article_name):
 
     doc = nlp(file_input)
 
+    previous_nsubj = None
+
     for sen in doc.sents:
         # TODO: how solve the '\n'
         sen_spit = sen.text.split('\n')
-        sen_spit.sort(key=lambda x: len(x))
-        sentences.append(sen_spit[-1])
-        sentences_lemma.append([word.lemma_.lower() for word in sen if not word.is_punct])
+
+        # handel '\n'
+        if len(sen_spit) > 1:
+            max_sen = max(sen_spit, key=lambda x: len(x))
+            sen = nlp(max_sen)
+        else:
+            max_sen = sen.text
+
+        sen_lemma = []
+        word_lst = []
+        for token in sen:
+            current_word = token.text_with_ws
+            if not token.is_punct:
+                sen_lemma.append(token.lemma_.lower())
+            if token.dep_ == 'nsubj':
+                if token.tag_ != 'PRP':
+                    previous_nsubj = token.text_with_ws
+                    sen_lemma.append(token.lemma_.lower())
+                else:
+                    if previous_nsubj:
+                        sen_lemma.append(previous_nsubj.lower())
+                        current_word = previous_nsubj
+                    else:
+                        sen_lemma.append(token.lemma_.lower())
+            if not current_word.isspace():
+                word_lst.append(current_word)
+
+        sentences_lemma.append(sen_lemma)
+
+        sentences.append(''.join(word_lst))
 
 
 def my_tokenize(sentence):
@@ -71,7 +100,7 @@ def term_fre(words):
     term_f = {}
     for w in words:
         # TODO: term frequency
-        term_f[w] = min(term_f.get(w, 0) + 1, 1)
+        term_f[w] = 1
         # term_f[w] = term_f.get(w, 0) + 1
     return term_f
 
