@@ -1,6 +1,7 @@
 #!/usr/bin/python3 -W ignore::DeprecationWarning
 # -*- coding:utf8 -*-
 import sys
+import json
 
 from Asking import sentences_generating
 from Asking import apposition
@@ -8,11 +9,11 @@ from Asking import conjunction
 from Asking import question_generating
 from Asking import utils
 from Asking import ranking
+from collections import defaultdict
 
 if __name__ == "__main__":
-    # filename = "../data/set3/a4.txt"
-    filename = sys.argv[1]
-    num_questions = int(sys.argv[2])
+    filename = 'data/set1/a1.txt'
+    num_questions = 20
     # num_questions = 500
     # preprocessing
     input_text = utils.read_input_file(filename)
@@ -27,11 +28,31 @@ if __name__ == "__main__":
     # ranking
     ranked_binary = ranking.ranking(binary)
     ranked_wh = ranking.ranking(wh)
-    binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh)
+    binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh, num_questions)
+    tmp_file = "Asking/questions/tmp_question.txt"
+    final_file = "Asking/questions/"
+    utils.write_output_file(tmp_file, binary)
+    utils.write_output_file_append(tmp_file, wh)
+    tt_file = "Asking/questions/tt.txt"
 
+    bert_lm.bert_rank(tt_file, final_file)
+    # bert_lm.bert_rank('/content/11611NLP-Question-Asking-Answering/bertdata/lm/test.txt', final_file)
+    questions_dict = defaultdict(lambda: 0)
+    result = final_file + '/test_results.json'
+    with open(result, 'r') as f:
+        data = json.load(f)
+
+    for i in range(len(data)):
+        if i < len(binary):
+            questions_dict[binary[i]] = data[i]['ppl']
+        else:
+            questions_dict[wh[i - len(binary)]] = data[i]['ppl']
+
+    ranked_questions = sorted(questions_dict.items(), key=lambda item: item[1], reverse=True)
     questions = []
-    questions.extend(binary)
-    questions.extend(wh)
+    for r in ranked_questions:
+        questions.append(r[0])
+
     # sorted_questions = sorted(questions, key=len)
     sample_question = "why nlp so difficult?"
     try:
@@ -47,8 +68,3 @@ if __name__ == "__main__":
     except:
         for i in range(num_questions):
             print(sample_question)
-
-    # # write to question file
-    # output_file = "./questions/set1_a1_question.txt"
-    # utils.write_output_file(output_file, binary)
-    # utils.write_output_file_append(output_file, wh)

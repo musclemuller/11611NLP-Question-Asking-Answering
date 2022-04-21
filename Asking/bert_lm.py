@@ -6,8 +6,8 @@ from __future__ import print_function
 import os
 import json
 import logging
-import bert_model
-import tokenization
+from Asking import bert_model
+from Asking import tokenization
 import numpy as np
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
