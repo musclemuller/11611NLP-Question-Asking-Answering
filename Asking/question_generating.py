@@ -188,7 +188,7 @@ def format_question(question):
                                    (words[i + 1] != "(")):
             if word != " ":
                 q += word
-        elif word == '(' or word == ')' or word == "-" or word == "–":
+        elif word == '(' or word == "-" or word == "–":
             q += word
         else:
             q += word + " "
