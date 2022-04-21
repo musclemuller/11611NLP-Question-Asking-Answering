@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -W ignore::DeprecationWarning
 # -*- coding:utf8 -*-
+import json
 import sys
 
 from Asking import sentences_generating
@@ -9,12 +10,14 @@ from Asking import question_generating
 from Asking import utils
 from Asking import ranking
 from Asking import further_simplicate
+from Asking import bert_lm
+from collections import defaultdict
 
 if __name__ == "__main__":
-    filename = "../data/set1/a2.txt"
-    # filename = sys.argv[1]
-    # num_questions = int(sys.argv[2])
-    num_questions = 60
+    # filename = "../data/set1/a2.txt"
+    # num_questions = 60
+    filename = sys.argv[0]
+    num_questions = sys.argv[1]
     # preprocessing
     input_text = utils.read_input_file(filename)
     sentences = sentences_generating.do_segementation(input_text)
@@ -27,14 +30,48 @@ if __name__ == "__main__":
     # question generating
     binary, wh = question_generating.generating(sentences)
 
+    question = []
+    question.extend(binary)
+    question.extend(wh)
+    for line in question:
+        print(line)
     # ranking
     ranked_binary = ranking.ranking(binary)
     ranked_wh = ranking.ranking(wh)
-    binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh)
 
+    binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh, num_questions)
+    tmp_file = "./questions/tmp_question.txt"
+    final_file = "./questions"
+    utils.write_output_file(tmp_file, binary)
+    utils.write_output_file_append(tmp_file, wh)
+    tt_file = "./questions/tt.txt"
+    questions_dict = defaultdict(lambda: 0)
+
+    fp = open(tmp_file, 'r', encoding='utf-8')
+    i = 0
+    for line in fp.readlines():
+        try:
+            utils.write_output_file(tt_file, [line])
+            bert_lm.bert_rank(tt_file, final_file)
+            result = final_file + '/test_results.json'
+            with open(result, 'r') as f:
+                data = json.load(f)
+            if i < len(binary):
+                questions_dict[binary[i]] = data[0]['ppl']
+            else:
+                questions_dict[wh[i - len(binary)]] = data[0]['ppl']
+        except:
+            if i < len(binary):
+                questions_dict[binary[i]] = 0
+            else:
+                questions_dict[wh[i - len(binary)]] = 0
+        i = i + 1
+
+    ranked_questions = sorted(questions_dict.items(), key=lambda item: item[1], reverse=True)
     questions = []
-    questions.extend(binary)
-    questions.extend(wh)
+    for r in ranked_questions:
+        questions.append(r[0])
+
     # sorted_questions = sorted(questions, key=len)
     sample_question = "why nlp so difficult?"
     try:
@@ -50,8 +87,3 @@ if __name__ == "__main__":
     except:
         for i in range(num_questions):
             print(sample_question)
-
-    # # write to question file
-    # output_file = "./questions/set1_a1_question.txt"
-    # utils.write_output_file(output_file, binary)
-    # utils.write_output_file_append(output_file, wh)

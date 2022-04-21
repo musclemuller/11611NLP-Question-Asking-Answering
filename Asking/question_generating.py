@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-from tag import *
-import stanza
-=======
 import string
 import logging
 
@@ -9,7 +5,6 @@ from tag import *
 from Asking import models
 from Asking import conjunction_util
 
->>>>>>> Stashed changes
 
 def match_npvp(tree):
     tree = tree.children[0]
@@ -17,16 +12,13 @@ def match_npvp(tree):
         return False
     if len(tree.children) != 3:
         return False
-    #look for np and vp structure
+    # look for np and vp structure
     if tree.children[0].label != NP:
         return False
     if tree.children[1].label != VP:
         return False
     return True
 
-<<<<<<< Updated upstream
-def binary_questions(doc):
-=======
 def match_ppnpvp(tree):
     tree = tree.children[0]
     if tree.label != SENTENCE:
@@ -47,7 +39,6 @@ def match_ppnpvp(tree):
 
 
 def binary_questions(doc, line):
->>>>>>> Stashed changes
     question = ""
     words = doc.sentences[0].words
     spacy_nlp = models.spacy_nlp
@@ -82,16 +73,14 @@ def binary_questions(doc, line):
 
     return question
 
-<<<<<<< Updated upstream
-def aux_binary_quesitons(doc):
-=======
+
+
 def return_root(doc):
     for token in doc:
         if token.dep_ == "ROOT":
             return token
 
 def front_binary_quesitons(doc):
->>>>>>> Stashed changes
     question = ""
     for word in doc.sentences[0].words:
         if word.deprel == "aux" or word.xpos == "VBP" or word.xpos == "VBD" or word.xpos == "VBZ":
@@ -105,9 +94,9 @@ def front_binary_quesitons(doc):
 
     return question
 
+
 def ner_questions(doc, sentence):
     questions = []
-<<<<<<< Updated upstream
     ents = {}
     for ent in doc.sentences[0].ents:
         ents[ent.text] = ent.type
@@ -121,7 +110,7 @@ def ner_questions(doc, sentence):
             del ents[first_word]
             return questions
 
-    base = binary_questions(doc)
+    base = binary_questions(doc, sentence)
     # print("base:", base)
     for ent in ents.keys():
         wh = get_wh(ents[ent])
@@ -131,7 +120,6 @@ def ner_questions(doc, sentence):
         question = wh + " " + base
         question = question.replace(ent, "", 1)
         questions.append(format_question(question))
-=======
     try:
         ents = {}
         for ent in doc.sentences[0].ents:
@@ -164,7 +152,6 @@ def ner_questions(doc, sentence):
                 questions.append(format_question(question))
     except:
         return []
->>>>>>> Stashed changes
     return questions
 
 
@@ -180,14 +167,8 @@ def get_wh(ent):
     if ent == "TIME":
         return "when"
 
-<<<<<<< Updated upstream
-def why_questions(doc):
-    question = binary_questions(doc)
-=======
-
 def why_questions(doc, line):
     question = binary_questions(doc, line)
->>>>>>> Stashed changes
     question = "Why " + question
     return format_question(question)
 
@@ -231,17 +212,14 @@ def simplify_sentence(tree):
             sentence = sentence + word + " "
     return sentence
 
+
 def generating(sentences):
-<<<<<<< Updated upstream
-    nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
-    questions = []
-=======
     logger = logging.getLogger()
     logger.disabled = True
     nlp = models.stanza_nlp
     binary = []
     wh = []
->>>>>>> Stashed changes
+
     for line in sentences:
         doc = nlp(line)
         tree = doc.sentences[0].constituency
@@ -262,16 +240,6 @@ def generating(sentences):
                 line = line.split("because")[0]
                 line = line.rstrip(",")
                 doc = nlp(line)
-<<<<<<< Updated upstream
-                question = why_questions(doc)
-                questions.append(question)
-            # check if the question contains NERs
-            if len(doc.sentences[0].ents) != 0:
-                question = ner_questions(doc, line)
-                questions.extend(question)
-
-            question = binary_questions(doc)
-=======
                 question = why_questions(doc, line)
                 wh.append(question)
             # check if the question contains NERs
@@ -279,42 +247,14 @@ def generating(sentences):
                 question = ner_questions(doc, line)
                 wh.extend(question)
             question = binary_questions(doc, line)
->>>>>>> Stashed changes
             question = format_question(question)
-            questions.append(question)
-    return questions
+            binary.append(question)
+    logger.disabled = False
+    return binary, wh
+
 
 # Main program
 if __name__ == "__main__":
-<<<<<<< Updated upstream
-    sentences = ["John made a cake.", "Mary makes a cake.", "I make a cake.", "John has made a cake.", "I have made a cake.", "She had made a cake.", "David had lunch in New York with Mary last Sunday because they did not meet in 10 years."]
-    #stanza.download(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
-    # nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,constituency,lemma,depparse, ner')
-    # questions = []
-    # for line in sentences:
-    #     doc = nlp(line)
-    #     tree = doc.sentences[0].constituency
-    #     if match_npvp(tree):
-    #         # check for why questions
-    #         if "because" in line.split():
-    #             line = line.split("because")[0]
-    #             line = line.rstrip(",")
-    #             doc = nlp(line)
-    #             question = why_questions(doc)
-    #             questions.append(question)
-    #         # check if the question contains NERs
-    #         if len(doc.sentences[0].ents) != 0:
-    #             question = ner_questions(doc, line)
-    #             questions.extend(question)
-    # 
-    #         question = binary_questions(doc)
-    #         question = format_question(question)
-    #         questions.append(question)
-    questions = generating(sentences)
-
-    print(questions)
-
-=======
     # sentences = ["John made a cake.", "Mary makes a cake.", "I make a cake.", "John has made a cake.",
     #              "I have made a cake.", "She had made a cake.",
     #              "David had lunch in New York with Mary last Sunday because they did not meet in 10 years.",
@@ -324,6 +264,4 @@ if __name__ == "__main__":
     for l in questions:
         for q in l:
             print(q)
->>>>>>> Stashed changes
-
 

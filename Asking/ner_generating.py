@@ -15,11 +15,7 @@ def write_sentences(filename, list):
 # Main program
 if __name__ == "__main__":
     filename = "../sentences/set1_a1.txt"
-<<<<<<< Updated upstream
-    nlp = spacy.load('en_core_web_sm')
-=======
     nlp = models.spacy_nlp
->>>>>>> Stashed changes
     ners = []
     with open(filename, "r") as f:
         for line in f:

@@ -14,3 +14,10 @@ def write_output_file(filename, list):
     for i in range(len(list)):
         # fp.write(str(i) + " " + str(len(list[i])) + " " + list[i] + '\n')
         fp.write(list[i] + '\n')
+
+
+def write_output_file_append(filename, list):
+    fp = open(filename, 'a', encoding='utf-8')
+    for i in range(len(list)):
+        # fp.write(str(i) + " " + str(len(list[i])) + " " + list[i] + '\n')
+        fp.write(list[i] + '\n')

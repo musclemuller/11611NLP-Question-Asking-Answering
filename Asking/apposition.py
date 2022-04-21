@@ -1,13 +1,16 @@
-import os
-import stanza
 from tag import *
-import apposition_util
+from Asking import apposition_util
+from Asking import models
+import logging
 
 APPOSITION = (SENTENCE, ((NP, (NP, COMMA, NP, COMMA)), VP, PERIOD))
 
 def parse_tree(sentences):
     # stanza.download(lang='en', processors='tokenize,pos,constituency')
-    nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
+    # logger = logging.getLogger('stanza')
+    # logger.disabled = True
+    # nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
+    nlp = models.stanza_nlp
     # doc = nlp("Bill Gates, a brilliant entrepreneur, owns Microsoft.")
     # tree = doc.sentences[0].constituency
     # print(tree)
@@ -25,13 +28,8 @@ def parse_tree(sentences):
         # print(tree)
         if apposition_util.matched(tree):
             sentences.remove(sentence)
-<<<<<<< Updated upstream
             sentences += apposition_util.split_apposition(tree.children[0])
-=======
-            changed = apposition_util.split_apposition(tree.children[0])
-            sentences += changed
-    logger.disabled = False
->>>>>>> Stashed changes
+    # logger.disabled = False
     return sentences
     # trees = []
     # for doc in out_docs:
