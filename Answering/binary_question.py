@@ -51,11 +51,11 @@ def answer_binary(sentence, question):
     compare_ner_result, only_question_ner = compare_NER(sentence_ner, question_ner)
     if not compare_ner_result:
         if only_question_ner and randint(1, 10) > 4:
-            print('No, it should not be {}.'.format(str(only_question_ner.pop())))
+            return 'No, it should not be {}.'.format(str(only_question_ner.pop()))
         else:
-            print('No.')
+            return 'No.'
     elif find_negation(q_doc, s_doc):
-        print('No.')
+        return 'No.'
     else:
-        print('Yes.')
+        return 'Yes.'
 

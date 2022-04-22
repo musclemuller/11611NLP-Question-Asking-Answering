@@ -30,8 +30,9 @@ def vectorize_sentence(sentence_lemma):
     return vector_sentence
 
 
-def load_file(article_name):
+def load_file(file_input):
     """
+    :param file_input:
     :param article_name: string
     :return: list of sentence
 
@@ -40,11 +41,6 @@ def load_file(article_name):
     sentences_lemma.clear()
     word_freq_sentence.clear()
     sentences_vectors.clear()
-
-    try:
-        file_input = open(article_name, encoding='utf8').read()
-    except:
-        file_input = 'Hello! I am No Language Processing.'
 
     doc = nlp(file_input)
 
@@ -125,12 +121,12 @@ def cal_similarity(q_vector, s_vector):
     return (similarity / math.sqrt(s_lst)) if math.sqrt(s_lst) != 0 else 0
 
 
-def cal_log_inverse_sentence_fre(article_name):
+def cal_log_inverse_sentence_fre(file_input):
     """
     :param article_name: string
     :return: dict of log inverse of sentence frequency
     """
-    load_file(article_name)
+    load_file(file_input)
     # print('Log inverse: tokenize')
     for sentences_idx in range(len(sentences)):
         word_set = set()

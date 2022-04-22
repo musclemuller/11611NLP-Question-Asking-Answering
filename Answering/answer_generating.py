@@ -1,56 +1,35 @@
 from Answering import sentence_processing
 from Answering import binary_question
+from Answering import answer_different_types
 
 nlp = sentence_processing.nlp
 
 
-def printAnswer(ask, original):
-    # Question Classification
-    question = nlp(ask)
-    if question[0].pos_ == 'AUX':
-        question_type = 'is'
-    elif question[0].pos_ == 'PRON':
-        question_type = 'wh'
-    else:
-        question_type = 'uk'
-
-        # Is-A Question
-    if question_type == 'is':
-        '''
-        # find closest subpart in original one
-        # namely: with same beginning & ending
-        answer = "Yes"
-
-        # Rule 1: Unmatching NERs
-        for ent in question.ents:
-            if ent.text not in original:
-                answer = "No"
-
-        # Rule 2: Parts match with NOT
-        T = nlp(original)
-        for token in T:
-            if token.text not in str(question.text):
-                if token.text.endswith("n't") or token.text.endswith('not') or token.text.endswith('no'):
-                    answer = "No"
-        '''
-        binary_question.answer_binary(ask, original)
-
-    if question_type == 'wh':
-        # for token in question:
-        #     print(token.pos_)
-        # for ent in question.ents:
-        #     print(ent.text, ent.label_)
-
-        Q = question
-        T = nlp(original)
+def printAnswer(question, original):
+    try:
+        # Question Classification
+        question = nlp(question)
         answer = original
+        if question[0].pos_ == 'AUX':
+            answer = binary_question.answer_binary(question, original)
+        elif question[0].lemma_.lower() == 'who':
+            answer = answer_different_types.answer_who(question, original)
+        elif question[0].lemma_.lower() == 'why':
+            answer = answer_different_types.answer_why(question, original)
+        elif question[0].lemma_.lower() == 'where':
+            answer = answer_different_types.answer_where(question, original)
+        elif question[0].lemma_.lower() == 'when':
+            answer = answer_different_types.answer_when(question, original)
+        elif question[0].lemma_.lower() == 'how':
+            if question[1].lemma_.lower() == 'many':
+                answer = answer_different_types.answer_how_many(question, original)
+            else:
+                answer = answer_different_types.answer_how(question, original)
+    except:
+        answer = original
+    finally:
+        print(answer.replace('\n', '').replace('\t', '').replace('\r', ''))
 
-        # if NER doesn't match, return corresponding NER
-        for ent in T.ents:
-            if ent.text not in Q.text:
-                answer = ent.text
 
-        print(answer)
-
-    if question_type == 'uk':
-        print(original)
+if __name__ == '__main__':
+    printAnswer('How many did you go?', 'I go 300 times.')
