@@ -95,32 +95,9 @@ def front_binary_quesitons(doc):
 
     return question
 
-
 def ner_questions(doc, sentence):
+    # spacy_doc = models.spacy_nlp(sentence)
     questions = []
-    ents = {}
-    for ent in doc.sentences[0].ents:
-        ents[ent.text] = ent.type
-    words = sentence.split()
-    first_word = words[0]
-    if first_word in ents.keys():
-        words[0] = get_wh(ents[first_word])
-        if words[0] is not None:
-            question = " ".join(words)
-            questions.append(format_question(question))
-            del ents[first_word]
-            return questions
-
-    base = binary_questions(doc, sentence)
-    # print("base:", base)
-    for ent in ents.keys():
-        wh = get_wh(ents[ent])
-        if wh is None:
-            continue
-        # print("wh:", wh)
-        question = wh + " " + base
-        question = question.replace(ent, "", 1)
-        questions.append(format_question(question))
     try:
         ents = {}
         for ent in doc.sentences[0].ents:
@@ -144,9 +121,18 @@ def ner_questions(doc, sentence):
             else:
                 # format the sentence in the structure of wh + base formate from binary question
                 question = wh + " " + base
-                prev_index = words.index(ent.split()[0]) - 1
-                prev_word = words[prev_index]
-                if doc.sentences[0].words[prev_index].deprel == "case" and prev_word != "with":
+                # question = find_clause(ent, spacy_doc, question)
+                before = sentence.partition(ent)[0]
+                prev_words = before.split()
+                prev_word = prev_words[len(prev_words)-1]
+                # prev_index = words.index(ent.split()[0]) - 1
+                # prev_word = words[prev_index]
+                prev_index = -1;
+                for i, w in enumerate(words):
+                    if w == prev_word:
+                        if i < len(words) -1 and words[i+1] == ent.split()[0]:
+                            prev_index = i
+                if prev_index != -1 and doc.sentences[0].words[prev_index].deprel == "case" and prev_word != "with":
                     question = question.replace(prev_word + " " + ent, "")
                 else:
                     question = question.replace(ent, "", 1)
@@ -154,6 +140,28 @@ def ner_questions(doc, sentence):
     except:
         return []
     return questions
+#
+# def find_clause(ent, doc, question):
+#     try:
+#         head = None
+#         target = None
+#         for token in doc:
+#             if token.text == ent:
+#                 head = token.head
+#                 target = token
+#                 break;
+#     except:
+#         return question.replace(ent, "", 1)
+#
+#     if head is not None and target is not None:
+#         print(head.text)
+#         clause = doc[head.i:target.i]
+#         print("clause: " + clause.text)
+#         question = question.replace(clause.text, "")
+#         return question
+#     else:
+#         return question.replace(ent, "", 1)
+
 
 
 def get_wh(ent):
@@ -184,7 +192,7 @@ def format_question(question):
     q = ""
     for i, word in enumerate(words):
 
-        if i < len(words) - 2 and ((words[i + 1] in string.punctuation or word == "-" or word == "–") and
+        if i < len(words) - 1 and ((words[i + 1] in string.punctuation or word == "-" or word == "–" or words[i+1] == "'s") and
                                    (words[i + 1] != "(")):
             if word != " ":
                 q += word
@@ -224,9 +232,19 @@ def generating(sentences):
     for line in sentences:
         doc = nlp(line)
         tree = doc.sentences[0].constituency
+        ents = []
+        for ent in doc.sentences[0].ents:
+            ents.append(ent.text)
+
+        # lower case first word
+        words = line.split()
+        if words[0] not in ents or doc.sentences[0].words[0].upos == "NUM":
+            line = line[0].lower() + line[1:len(line)]
+            doc = nlp(line)
+            tree = doc.sentences[0].constituency
         if match_ppnpvp(tree):
             # check if sentences start with an On time, sentence
-            if line.split()[0] == "On" and len(doc.sentences[0].ents) != 0:
+            if line.split()[0] == "On" and len(ents) != 0:
                 # strip the sentence
                 line = simplify_sentence(tree)
                 doc = nlp(line)
@@ -244,7 +262,7 @@ def generating(sentences):
                 question = why_questions(doc, line)
                 wh.append(question)
             # check if the question contains NERs
-            if len(doc.sentences[0].ents) != 0:
+            if len(ents) != 0:
                 question = ner_questions(doc, line)
                 wh.extend(question)
             question = binary_questions(doc, line)
@@ -260,8 +278,9 @@ if __name__ == "__main__":
     #              "I have made a cake.", "She had made a cake.",
     #              "David had lunch in New York with Mary last Sunday because they did not meet in 10 years.",
     #              "John did not go to the gym yesterday.", "John will have a meeting on Monday."]
-    sentences = ["She had made a cake.", "Donovan was a member of the U.S. squad at the 2006 World Cup, in which the Americans eliminated in the group stage.",
-                 "He was named to the MLS All-Time Best XI after the season."]
+    sentences = ["Dempsey has also played for New England Revolution, Fulham and Tottenham Hotspur.", "Donovan was a member of the U.S. squad at the 2006 World Cup, in which the Americans eliminated in the group stage.",
+                  "He was named to the MLS All-Time Best XI after the season.", "3 airplanes fly across the sky.","One of Dempsey's passion outside of soccer is hip hop music."]
+    # sentences = ["He was named to the MLS All-Time Best XI after the season."]
     questions = generating(sentences) # generating binary and wh questions for NP, VP sentences
     for l in questions:
         for q in l:
