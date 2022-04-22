@@ -1,6 +1,6 @@
 # Ubuntu Linux as the base image
 FROM ubuntu:22.04
-
+FROM python:3.7.13-slim-buster
 # Set UTF-8 encoding
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
@@ -18,16 +18,19 @@ RUN pip3 install --upgrade pip
 RUN pip3 install spacy
 RUN pip3 install stanza
 RUN pip3 install nltk
+RUN apt-get install -y wget
+RUN apt-get install -y unzip
 RUN python3 -m spacy download en_core_web_lg
 RUN python3 -c 'import stanza; stanza.download("en")'
 RUN python3 -c 'import nltk; nltk.download("punkt")'
-RUN pip install tensorflow==1.15
-RUN pip install numpy==1.19.5
+#RUN pip3 install tensorflow==1.15
+RUN python3 -m pip install --no-cache-dir --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.12.0-py3-none-any.whl
+RUN pip3 install numpy==1.19.5
 
 # Add the files into container, under QA folder, modify this based on your need
 RUN mkdir /QA
 RUN wget -P /QA https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-12_H-768_A-12.zip
-RUN unzip uncased_L-12_H-768_A-12.zip -d /QA/uncased_L-12_H-768_A-12
+RUN unzip /QA/uncased_L-12_H-768_A-12.zip -d /QA/uncased_L-12_H-768_A-12
 ADD docker/ask /QA
 ADD docker/answer /QA
 ADD Answering /QA/Answering
