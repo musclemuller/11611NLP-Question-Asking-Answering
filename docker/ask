@@ -9,26 +9,37 @@ from Asking import conjunction
 from Asking import question_generating
 from Asking import utils
 from Asking import ranking
+from Asking import further_simplicate
 from Asking import bert_lm
 from collections import defaultdict
 
 if __name__ == "__main__":
+    # filename = "../data/set4/a2.txt"
+    # num_questions = 60
     filename = sys.argv[0]
     num_questions = sys.argv[1]
-    # num_questions = 500
     # preprocessing
     input_text = utils.read_input_file(filename)
     sentences = sentences_generating.do_segementation(input_text)
+    sentences = further_simplicate.further_simplification(sentences)
     sentences = apposition.parse_tree(sentences)
     sentences = conjunction.parse_tree(sentences)
-    sentences = [s for s in sentences if s.count(' ') < 50]
+
+
+    sentences = [s for s in sentences if (50 > s.count(' ') > 3)]
 
     # question generating
     binary, wh = question_generating.generating(sentences)
 
+    # question = []
+    # question.extend(binary)
+    # question.extend(wh)
+    # for line in question:
+    #     print(line)
     # ranking
     ranked_binary = ranking.ranking(binary)
     ranked_wh = ranking.ranking(wh)
+
     binary, wh = ranking.process_binary_wh_nums(ranked_binary, ranked_wh, num_questions)
     tmp_file = "./questions/tmp_question.txt"
     final_file = "./questions"
