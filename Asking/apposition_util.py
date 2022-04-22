@@ -60,4 +60,7 @@ def combine_two_sentences(np, vp):
     str2 = ' '.join(vp)
     str = str1 + ' ' + str2
     str = str.capitalize()
+
+    str.strip(".,")
+    str = str + "."
     return str

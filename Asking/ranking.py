@@ -27,22 +27,19 @@ def ranking(questions):
     ranked_questions = sorted(questions_dict.items(), key=lambda item: item[1], reverse=True)
     return  ranked_questions
 
-def process_binary_wh_nums(ranked_binary, ranked_wh):
-    standard_length = 0
+def process_binary_wh_nums(ranked_binary, ranked_wh, num_questions):
     binary_len = len(ranked_binary)
     wh_len = len(ranked_wh)
-    if binary_len > wh_len:
-        standard_length = wh_len
-    else:
-        standard_length = binary_len
     binary = []
     wh = []
     for rb in ranked_binary:
         binary.append(rb[0])
     for rw in ranked_wh:
         wh.append(rw[0])
-    binary = binary[:standard_length]
-    wh = wh[:standard_length]
+    if binary_len > num_questions:
+        binary = binary[:num_questions]
+    if wh_len > num_questions:
+        wh = wh[:num_questions]
     return binary, wh
 
 if __name__ == "__main__":
