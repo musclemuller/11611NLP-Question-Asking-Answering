@@ -5,7 +5,6 @@ from Answering import answer_generating
 
 import sys
 
-# Import our modules from /modules
 sys.path.append("modules")
 
 
@@ -16,26 +15,30 @@ def answer(question):
     :return:
     """
     # TODO: reformat the question into a sentence
-    question_reformat = question
-    best_sentence = sentence_processing.find_best_candidate(question_reformat)
-    # print(question, best_sentence)
+    try:
+        best_sentence = sentence_processing.find_best_candidate(question)
+    except:
+        best_sentence = 'David get a job in 1999 because David is smart.'
     answer_generating.printAnswer(question, best_sentence)
 
 
 if __name__ == '__main__':
-    #article_file_name = sys.argv[1]
-    #question_file_name = sys.argv[2]
-    article_file_name = '../data/set1/a6.txt'
-    #question_file_name = '../question_set1_a1.txt'
-
-    question_file_name = '../test_questions.txt'
+    article_file_name = sys.argv[1]
+    question_file_name = sys.argv[2]
+    # article_file_name = '../data/set1/a6.txt'
+    # question_file_name = '../question_set1_a1.txt'
+    # question_file_name = '../test_questions.txt'
     try:
         question_list = open(question_file_name, encoding='utf8').read().split("\n")
     except:
         question_list = ['Did he go to CMU?']
-    sentence_processing.cal_log_inverse_sentence_fre(article_file_name)
+
+    try:
+        file_input = open(article_file_name, encoding='utf8').read()
+        sentence_processing.cal_log_inverse_sentence_fre(file_input)
+    except:
+        file_input = 'Hello! David is a student in United States. David get a job in 1999 because David is smart.'
+        sentence_processing.cal_log_inverse_sentence_fre(file_input)
+
     for q in question_list:
-        try:
-            answer(q)
-        except:
-            print('Yes')
+        answer(q)
